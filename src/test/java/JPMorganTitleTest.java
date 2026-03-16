@@ -18,8 +18,52 @@ public class JPMorganTitleTest {
 
     WebDriver driver;
     JPMorganHomePage homePage;
+    // The Engine and The Test Log
+    com.aventstack.extentreports.ExtentReports report;
+    com.aventstack.extentreports.ExtentTest test;
+
+
 
     @BeforeMethod
+    public void setUp() {
+        report = utils.ExtentManager.getInstance();
+        test = report.createTest("J.P. Morgan Hover & Tab Switch Validation");
+        test.info("Booting up headless Chrome browser for CI/CD execution.");
+
+        // --- THE HEADLESS REFACTOR ---
+        org.openqa.selenium.chrome.ChromeOptions options = new org.openqa.selenium.chrome.ChromeOptions();
+        options.addArguments("--headless=new"); // Runs Chrome invisibly
+        options.addArguments("--window-size=1920,1080"); //Forces the resolution so the DOM doesn't collapse
+        options.addArguments("--disable-gpu"); // Standard Linux server stability flag
+
+        driver = new org.openqa.selenium.chrome.ChromeDriver(options);
+        // ----------------------------------------------
+
+        homePage = new pages.JPMorganHomePage(driver);
+    }
+
+
+    /*
+    // Before CI implementation
+
+    @BeforeMethod
+    public void setUp() {
+        // 1. Boot up the HTML Engine
+        report = utils.ExtentManager.getInstance();
+
+        // 2. Create a new test entry in the dashboard
+        test = report.createTest("J.P. Morgan Hover & Tab Switch Validation");
+        test.info("Booting up fresh Chrome browser and forcing 1920x1080 resolution.");
+
+        driver = new org.openqa.selenium.chrome.ChromeDriver();
+        driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
+        homePage = new pages.JPMorganHomePage(driver);
+    }*/
+
+
+
+
+    /*
     public void setUp() {
         System.out.println("--- @BeforeMethod: Booting up fresh browser ----");
         driver = new ChromeDriver();
@@ -28,7 +72,7 @@ public class JPMorganTitleTest {
         driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
 
         homePage = new JPMorganHomePage(driver);
-    }
+    }*/
 
 
     /*
@@ -95,6 +139,15 @@ public class JPMorganTitleTest {
         JPMorganSearchResultsPage resultsPage = new JPMorganSearchResultsPage(driver);
         String newUrl = resultsPage.getCurrentUrl();
         System.out.println("Test: Success! New Tab URL is: " + newUrl);
+
+        // Log the results to the HTML Dashboard!
+        test.info("New Tab URL CAPTURED: " + newUrl);
+
+        if (newUrl.toLowerCase().contains("careers") || newUrl.toLowerCase().contains("jpmorgan")) {
+            test.pass("Success! The Ghost Hand gesture correctly routed to the new portal.");
+        } else {
+            test.fail("CRITICAL BUG: The new tab routed to an unexpected URL: " + newUrl);
+        }
 
         Assert.assertTrue(newUrl.toLowerCase().contains("careers") || newUrl.toLowerCase().contains("jpmorgan"), "CRITICAL BUG: The new tab did not route to the expected portal!");
 
@@ -200,13 +253,29 @@ public class JPMorganTitleTest {
 
     */
 
+
+    @AfterMethod
+    public void rearDown() {
+        if ( driver != null) {
+            driver.quit();
+        }
+        // CRITICAL: This command actually generates the physical HTML file!
+        if (report != null) {
+            report.flush();
+        }
+    }
+
+
+    /*
     @AfterMethod
     public void tearDown(){
         System.out.println("--- @AfterMethod: Shutting down safely ---");
         if (driver != null) {
             driver.quit();
         }
-    }
+    }*/
+
+
 }
 
 

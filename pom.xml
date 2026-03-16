@@ -28,6 +28,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>5.1.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>5.5.1</version>
@@ -46,6 +58,7 @@
         </dependency>
 
     </dependencies>
+
 
 <!-- 1st working code was as follows -->
    <!-- <dependencies>
