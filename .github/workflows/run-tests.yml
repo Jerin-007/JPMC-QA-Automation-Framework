@@ -3,39 +3,37 @@ name: Enterprise UI Automation Pipeline
 # 1. THE TRIGGER: When does this run?
 on:
   push:
-    branches: ["main"] # Runs automatically every time you push code
-  workflow_dispatch:   # Adds a visual "Run Workflow" button on GitHub
+    branches: [ "main" ] # Runs automatically every time you push code
+  workflow_dispatch:     # Adds a visual "Run Workflow" button on GitHub
 
 # 2. THE SERVER: Where does this run?
-  jobs:
-    - build-and-test:
-        runs-on: ubuntu-latest
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
 
-        # 3. THE INSTRUCTIONS: What does the server do?
-        steps:
-          - name: Download Repository Code
-            uses: actions/checkout@v4
+    # 3. THE INSTRUCTIONS: What does the server do?
+    steps:
+      - name: 📥 Download Repository Code
+        uses: actions/checkout@v4
 
-          - name: Install Java (JDK 25)
-            uses: actions/setup-java@4
-            with:
-              java-version: '25'
-              distribution: 'temurin'
-              cache: maven
+      - name: ☕ Install Java (JDK 25)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
 
-          - name: Install Google Chrome
-            run: |
-              sudo apt-get update
-              sudo apt-get install -y google-chrome-stable
+      - name: 🌐 Install Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
-          -name: Execute Maven Test Suite
-           run: mvn clean test
+      - name: 🚀 Execute Maven Test Suite
+        run: mvn clean test
 
-          - name: Upload Executive HTML Report
-            if: always() # Forced the report to upload even if the test fails!
-            uses: actions/upload-artifact@v4
-            with:
-              name: Extent-Report-Dashboard
-              path: target/Executive_Report.html
-    -
-      -
+      - name: 📊 Upload Executive HTML Report
+        if: always() # Forces the report to upload even if the test fails!
+        uses: actions/upload-artifact@v4
+        with:
+          name: Extent-Report-Dashboard
+          path: target/Executive_Report.html
