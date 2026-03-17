@@ -32,12 +32,12 @@ jobs:
         # We use -D to inject the Cloud Secret directly into Java's System properties!
         run: mvn clean test -Dreqres.api.key=${{ secrets.REQRES_API_KEY }}
 
-      - name: 📊 Upload Executive HTML Report
-        if: always() # Forces the report to upload even if the test fails!
-        uses: actions/upload-artifact@v4
-        with:
-          name: Extent-Report-Dashboard
-          path: target/Executive_Report.html
+     # - name: 📊 Upload Executive HTML Report
+      #  if: always() # Forces the report to upload even if the test fails!
+       # uses: actions/upload-artifact@v4
+        #with:
+         # name: Extent-Report-Dashboard
+         # path: target/Executive_Report.html
 
 
       - name: 📁 Rescue the HTML Reports (Artifacts)
