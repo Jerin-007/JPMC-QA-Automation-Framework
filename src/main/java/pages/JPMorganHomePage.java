@@ -1,5 +1,8 @@
 package pages;
 
+import java.util.List;
+import org.openqa.selenium.WebElement;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys; // Imports keyboard actions
 import org.openqa.selenium.WebDriver;
@@ -98,10 +101,13 @@ public class JPMorganHomePage {
         // 1. THE LAMBDA WAIT ENGINE (Bypassing the Race Condition!)
         org.openqa.selenium.WebElement visibleDesktopMenu = wait.until(d -> {
             // Grab the elements
+            List<WebElement> elements = d.findElements(menuLocator);
+            /*
             java.util.List<org.openqa.selenium.WebElement> elements = d.findElements(menuLocator);
+            */
 
             // Loop through them
-            for (org.openqa.selenium.WebElement el : elements) {
+            for (WebElement el : elements) {
                 if (el.isDisplayed()) {
                     return el; // Found it! The CSS has painted! Return the element and break the wait!
                 }
@@ -124,11 +130,11 @@ public class JPMorganHomePage {
         org.openqa.selenium.By subMenuLocator = org.openqa.selenium.By.xpath("//*[self::a or self::button or self::span][contains(., 'Leadership') or contains(., 'History') or contains(., 'Executives') or contains(., 'Careers')]");
 */
         // We use our same Lambda trick here just in case the dropdown animation is slow!
-        org.openqa.selenium.WebElement visibleSubMenu = wait.until(d -> {
+        WebElement visibleSubMenu = wait.until(d -> {
 
             //It now uses the 'By subMenuLocator' from the top of the class!
-            java.util.List<org.openqa.selenium.WebElement> elements = d.findElements(subMenuLocator);
-            for (org.openqa.selenium.WebElement el : elements) {
+            java.util.List<WebElement> elements = d.findElements(subMenuLocator);
+            for (WebElement el : elements) {
                 if (el.isDisplayed()) return el;
             }
             return null;

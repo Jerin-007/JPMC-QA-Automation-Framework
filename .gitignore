@@ -69,3 +69,6 @@ out/
 
 # Maven
 target/
+
+# Ignore Security Secrets
+config.properties
