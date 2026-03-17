@@ -3,6 +3,8 @@ import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import org.testng.Reporter;
+
 
 public class ReqResApiTest {
 
@@ -91,7 +93,16 @@ public class ReqResApiTest {
                 .then()
                         .extract().response();
 
-        // 4. The SDET Assertions
+        // 4.1  The SDET Assertions & HTML Logging
+        // Reporter.log(String, true) means: "Print to HTML AND print to the console"
+        Reporter.log("<b>--- API EXECUTION LOGS ---</b>", true);
+        Reporter.log("<b>Endpoint:</b> POST /users", true);
+        Reporter.log("<b>Payload Sent:</b> <br><pre>" + newUserData + "</pre>", true);
+        Reporter.log("<b>Status Code Received:</b> " + response.getStatusCode(), true);
+        Reporter.log("<b>Response Body:</b> <br><pre>" + response.getBody().asPrettyString() + "</pre>", true);
+        Reporter.log("<b>--------------------------</b>", true);
+
+        // 4.2 The SDET Assertions
         System.out.println("POST Status Code: " + response.getStatusCode());
         System.out.println("POST Response: \n" + response.getBody().asPrettyString());
 

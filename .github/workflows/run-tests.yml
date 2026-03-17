@@ -38,3 +38,13 @@ jobs:
         with:
           name: Extent-Report-Dashboard
           path: target/Executive_Report.html
+
+
+      - name: 📁 Rescue the HTML Reports (Artifacts)
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+            name: Full-Automation-Reports
+            # By just saying 'target/', GitHub will zip up the ENTIRE folder,
+            # including your Executive_Report.html AND the surefire-reports!
+            path: target/
