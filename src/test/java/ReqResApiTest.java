@@ -47,4 +47,61 @@ public class ReqResApiTest {
         String secondUserEmail = response.jsonPath().getString("data[1].email");
         Assert.assertEquals(secondUserEmail, "lindsay.ferguson@reqres.in", "Email mismatch!");
     }
+
+
+    @Test
+    public void verifyUserCreation() {
+        // 1. The Waiter's Instructions
+        RestAssured.baseURI = "https://reqres.in/api";
+
+        // Fetch the secret key from your vault.
+        String mySecretKey = utils.ConfigReader.getProperty("reqres.api.key");
+
+        // 2. Build the Payload (The Food Order)
+        // Note: In an enterprise framework, we use advanced tools to build JSON,
+        // but for your first POST, we will just use a raw string.
+        String newUserData = "{\n" +
+                "    \"name\": \"Jerry\", \n" +
+                "     \"job\": \"Senior SDTE\"\n" +
+                "}";
+
+
+        /*
+        // 3. The Execution
+        Response response = RestAssured
+                .given()
+                    .header("Content-Type", "application/json") // Tell the server that we are sending JSON!
+                    .body(newUserData)                                // Attach the payload
+                .when()
+                    .post("/users")                                // Notice we are using POST, not GET
+                .then()
+                    .extract().response();
+
+        */
+
+        // 3. The Execution
+        Response response = RestAssured
+                .given()
+                        .header("x-api-key", mySecretKey)                   // 1. Hand the Bouncer your VIP key
+                        .header("User-Agent", "PostmanRuntime/7.32.3")   // 2. THE SPOOF: Trick Cloudflare!
+                        .header("Content-Type", "application/json")      // 3. Tell the server we are speaking JSON
+                        .body(newUserData)
+                .when()
+                        .post("/users")
+                .then()
+                        .extract().response();
+
+        // 4. The SDET Assertions
+        System.out.println("POST Status Code: " + response.getStatusCode());
+        System.out.println("POST Response: \n" + response.getBody().asPrettyString());
+
+        // Assert 201 Created (Not 200 OK!)
+        Assert.assertEquals(response.getStatusCode(), 201, "User was not created!");
+
+        // Use JSONPath to verify the server saved your exact name
+        String createdName = response.jsonPath().getString("name");
+        Assert.assertEquals(createdName, "Jerry", "The server saved the wrong name!");
+    }
+
+
 }
