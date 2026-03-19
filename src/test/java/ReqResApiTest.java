@@ -5,6 +5,11 @@ import org.testng.annotations.Test;
 
 import org.testng.Reporter;
 
+import pojo.UserPayload;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import pojo.UserResponse;
+
 
 public class ReqResApiTest {
 
@@ -51,14 +56,15 @@ public class ReqResApiTest {
     }
 
 
-    @Test
-    public void verifyUserCreation() {
+    @Test(priority = 2)
+    public void verifyUserCreation() throws Exception {
         // 1. The Waiter's Instructions
         RestAssured.baseURI = "https://reqres.in/api";
 
         // Fetch the secret key from your vault.
         String mySecretKey = utils.ConfigReader.getProperty("reqres.api.key");
 
+      /*
         // 2. Build the Payload (The Food Order)
         // Note: In an enterprise framework, we use advanced tools to build JSON,
         // but for your first POST, we will just use a raw string.
@@ -66,6 +72,16 @@ public class ReqResApiTest {
                 "    \"name\": \"Jerry\", \n" +
                 "     \"job\": \"Senior SDTE\"\n" +
                 "}";
+        */
+
+        // 2. THE ENTERPRISE POJO: Build the Payload using Java!
+        UserPayload newUserData = new UserPayload("Jerry", "Senior SDET");
+
+        // (Optional but highly recommended)
+        // We use Jackson's ObjectMapper to generate a beautiful JSON string just for our HTML logs.
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonForLogs = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newUserData);
+
 
 
         /*
@@ -87,7 +103,7 @@ public class ReqResApiTest {
                         .header("x-api-key", mySecretKey)                   // 1. Hand the Bouncer your VIP key
                         .header("User-Agent", "PostmanRuntime/7.32.3")   // 2. THE SPOOF: Trick Cloudflare!
                         .header("Content-Type", "application/json")      // 3. Tell the server we are speaking JSON
-                        .body(newUserData)
+                        .body(newUserData) // THE MAGIC: RestAssured automatically translates your POJO into JSON!
                 .when()
                         .post("/users")
                 .then()
@@ -97,7 +113,7 @@ public class ReqResApiTest {
         // Reporter.log(String, true) means: "Print to HTML AND print to the console"
         Reporter.log("<b>--- API EXECUTION LOGS ---</b>", true);
         Reporter.log("<b>Endpoint:</b> POST /users", true);
-        Reporter.log("<b>Payload Sent:</b> <br><pre>" + newUserData + "</pre>", true);
+        Reporter.log("<b>Payload Sent:</b> <br><pre>" + jsonForLogs + "</pre>", true);
         Reporter.log("<b>Status Code Received:</b> " + response.getStatusCode(), true);
         Reporter.log("<b>Response Body:</b> <br><pre>" + response.getBody().asPrettyString() + "</pre>", true);
         Reporter.log("<b>--------------------------</b>", true);
@@ -109,9 +125,21 @@ public class ReqResApiTest {
         // Assert 201 Created (Not 200 OK!)
         Assert.assertEquals(response.getStatusCode(), 201, "User was not created!");
 
+
+        /*
         // Use JSONPath to verify the server saved your exact name
         String createdName = response.jsonPath().getString("name");
         Assert.assertEquals(createdName, "Jerry", "The server saved the wrong name!");
+        */
+
+        // 4. THE DESERIALIZATION: Convert the JSON response directly into our Java Object
+        UserResponse createdUser = response.as(UserResponse.class);
+
+        // 5. The Object-Oriented Assertions (No more Magic Strings!)
+        Assert.assertEquals(createdUser.getName(), "Jerry", "Name mismatch!");
+        Assert.assertEquals(createdUser.getJob(), "Senior SDET", "Job Mismatch!");
+        Assert.assertNotNull(createdUser.getId(), "CRITICAL: the server did not generate an ID");
+
     }
 
 
