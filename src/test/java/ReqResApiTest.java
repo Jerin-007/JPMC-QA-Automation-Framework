@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pojo.UserResponse;
 
+import org.testng.annotations.DataProvider;
+
 
 public class ReqResApiTest {
 
@@ -139,6 +141,57 @@ public class ReqResApiTest {
         Assert.assertEquals(createdUser.getName(), "Jerry", "Name mismatch!");
         Assert.assertEquals(createdUser.getJob(), "Senior SDET", "Job Mismatch!");
         Assert.assertNotNull(createdUser.getId(), "CRITICAL: the server did not generate an ID");
+
+    }
+
+    // -------------------------------------------------------------
+    // THE CONVEYOR BELT: This method only supplies data.
+    // -------------------------------------------------------------
+
+    @DataProvider(name = "bulkUserRoleData")
+    public Object[][] provideUserRoles() {
+        return new Object[][] {
+                {"Alice", "Bank Teller"},       // Loop 1
+                {"Bob", "Branch Manager"},      // Loop 2
+                {"Charlie", "IT Administrator"} // Loop 3
+        };
+    }
+
+    @Test(priority = 3, dataProvider = "bulkUserRoleData")
+    public void verifyBulkUserCreation(String name, String job) throws Exception {
+
+        // 1. Fetch the secret key
+        String mySecretKey = utils.ConfigReader.getProperty("reqres.api.key");
+
+        // 2. THE DYNAMIC POJO: Notice we pass the variables, not hardcoded strings!
+        UserPayload newUserData = new UserPayload(name, job);
+
+        // 3. The Execution
+        Response response = RestAssured
+                .given()
+                    .header("x-api-key", mySecretKey)
+                    .header("User-Agent", "PostmanRuntime/7.32.3")
+                    .header("Content-Type", "application/json")
+                    .body(newUserData)
+                .when()
+                    .post("/users")
+                .then()
+                    .extract().response();
+
+
+        // 4. Deserialization (Catch the response)
+        UserResponse createdUser = response.as(UserResponse.class);
+
+        // 5. Dynamic HTML Logging
+        Reporter.log("<b>[BULK CREATION]</b> Created User: " + createdUser.getName() +
+                        " | Role: " + createdUser.getJob() +
+                        " | ID Generated: " + createdUser.getId(), true);
+
+        // 6. Dynamic Assertions
+        Assert.assertEquals(response.getStatusCode(), 201, "Failed to create" + name);
+        Assert.assertEquals(createdUser.getName(), name, "Name mismatch for" + name);
+        Assert.assertEquals(createdUser.getJob(), job, "Job mismatch for" + job);
+        Assert.assertNotNull(createdUser.getId(), "CRITICAL: No ID generated for " + name);
 
     }
 
