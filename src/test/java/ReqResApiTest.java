@@ -145,6 +145,24 @@ public class ReqResApiTest {
     }
 
     // -------------------------------------------------------------
+    // THE CONVEYOR BELT (Excel Edition)
+    // Scope: This method simply asks the ExcelReader for the data,
+    // then hands data directly to the @Test.
+    // --------------------------------------------------------------
+    @DataProvider(name = "excelUserData")
+    public Object[][] provideDataFromExcel() {
+        // Assuming your ExcelUtil needs the file name and the sheet name:
+        String excelFileName = "TestData.xlsx";
+        String sheetName = "Sheet1";
+
+        // RECYCLING: Calling your existing utility instead of making a new one!
+
+        return utils.ExcelUtil.getExcelData(excelFileName, sheetName);
+    }
+
+
+/*
+    // -------------------------------------------------------------
     // THE CONVEYOR BELT: This method only supplies data.
     // -------------------------------------------------------------
 
@@ -156,8 +174,10 @@ public class ReqResApiTest {
                 {"Charlie", "IT Administrator"} // Loop 3
         };
     }
+    */
 
-    @Test(priority = 3, dataProvider = "bulkUserRoleData")
+
+    @Test(priority = 3, dataProvider = "excelUserData")
     public void verifyBulkUserCreation(String name, String job) throws Exception {
 
         // 1. Fetch the secret key
