@@ -53,7 +53,11 @@ public class HybridE2ETest {
 
         // 5. Boot up Chrome (We will keep it visible so you can watch the magic)
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
+        /*
+        options.addArguments("--start-maximized"); // (You can actually delete --start-maximized, it doesn't do much in headless mode anyway)
+        */
+        options.addArguments("--headless"); // THE FIX: Tell Chrome to run invisibly for GitHub Actions!
+        options.addArguments("--window-size=1920,1080"); // 🚨 THE FIX: Force a 1080p desktop viewport!
         WebDriver driver = new ChromeDriver(options);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
