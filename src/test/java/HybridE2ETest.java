@@ -83,7 +83,9 @@ public class HybridE2ETest {
 
             // 8. THE SPEED STRIKE: Assert instantly BEFORE Wikipedia's Javascrpt refreshes the DOM!
 
-            // WebElement freshSearchBox = driver.findElement(By.name("search"));
+            //    THE CLOUD-READY ASSERTION: Always re-find elements that might refresh!
+
+            WebElement freshSearchBox = driver.findElement(By.name("search"));
 
             String actualValueInBox = searchBox.getAttribute("value");
             Assert.assertTrue(actualValueInBox.contains(generatedUserId), "The API ID did not make it to the UI!");
