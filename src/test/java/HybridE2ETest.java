@@ -82,9 +82,9 @@ public class HybridE2ETest {
             */
 
             // 8. THE BULLETPROOF CLOUD ASSERTION
-            // This single line acts as BOTH our Wait and our Assertion!
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            wait.until(ExpectedConditions.attributeContains(By.name("search"), "value", String.valueOf(generatedUserId)));
+            // Renamed to 'cloudWait' to avoid Java compilation clashes!
+            WebDriverWait cloudWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            cloudWait.until(ExpectedConditions.attributeContains(By.name("search"), "value", String.valueOf(generatedUserId)));
 
             Reporter.log("Successfully injected API data into the UI search box: " + generatedUserId, true);
 
