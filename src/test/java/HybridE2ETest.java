@@ -81,6 +81,16 @@ public class HybridE2ETest {
             Thread.sleep(3000);
             */
 
+            // 8. THE BULLETPROOF CLOUD ASSERTION
+            // We tell Selenium to keep checking the DOM for up to 10 seconds, ignoring stale elements,
+            // until the search box physically contains our generated API ID.
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.attributeContains(By.name("search"), "value", String.valueOf(generatedUserId)));
+
+            Reporter.log("Successfully injected API data into the UI search box: " + generatedUserId, true);
+
+
+           /*
             // 8. THE SPEED STRIKE: Assert instantly BEFORE Wikipedia's Javascrpt refreshes the DOM!
 
             //    THE CLOUD-READY ASSERTION: Always re-find elements that might refresh!
@@ -92,6 +102,8 @@ public class HybridE2ETest {
 
             // Now that the test has officially passed, pause for 3 seconds so you can watch it!
             Thread.sleep(3000);
+            */
+
 
         } finally {
             // 9. Always clean up the browser
