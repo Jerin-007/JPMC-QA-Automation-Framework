@@ -22,7 +22,7 @@ jobs:
       - name: 🚀 Execute Framework Inside Docker
         # The '-v' command maps the container's target folder to the GitHub server
         # We also pass your specific REQRES_API_KEY directly into the container!
-        run: docker run -v ${{ github.workspace }}/target:/usr/src/app/target jpmc-automation-engine mvn clean test -Dtest=TestRunner -Dreqres.api.key=${{ secrets.REQRES_API_KEY }}
+        run: docker run -v ${{ github.workspace }}/target:/usr/src/app/target jpmc-automation-engine mvn test -Dtest=TestRunner -Dreqres.api.key=${{ secrets.REQRES_API_KEY }}
 
       # 4. THE RESCUE: Grab the reports that escaped through the tunnel
       - name: 📁 Rescue the HTML Reports (Artifacts)
