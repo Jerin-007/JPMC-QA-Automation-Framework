@@ -13,6 +13,7 @@ Feature: API User Management
     Then the server should respond with status code 201
     And the response should confirm the name is "Jerry" and job is "Senior SDET"
     And the server should generate a valid user ID
+    And the database should contain the user "Jerry" with the correct role
   #------------------------------------------------------
   # TEST 2: The Data-Driven Conveyor Belt
   #------------------------------------------------------

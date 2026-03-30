@@ -102,4 +102,17 @@ public class UserSteps {
     public void excel_users_verified() {
         Reporter.log("Step: Complete Excel batch processed successfully!", true);
     }
+
+    @Then("the database should contain the user {string} with the correct role")
+    public void verify_database_record(String expectedName) {
+        Reporter.log("Step: Connecting to the Database...", true);
+
+        // Call our new DatabaseManager utility
+        String actualRoleInDb = utils.DatabaseManager.getRoleFromDatabase(expectedName);
+
+        Reporter.log("SQL Query Executed. Found Role: " + actualRoleInDb, true);
+
+        // The Ultimate Assertion: Does the DB match our expectations?
+        Assert.assertEquals(actualRoleInDb, "Senior SDET", "Database integrity failure!");
+    }
 }
